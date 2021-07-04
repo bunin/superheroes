@@ -6,4 +6,5 @@ class SuperheroesColors {
   static const background = Color(0xFF10141E);
   static const blue = Color(0xFF00BCD4);
   static const white = Colors.white;
+  static const heroCardBG = Color(0xFF2C3243);
 }
