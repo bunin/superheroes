@@ -5,6 +5,7 @@ import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
 import 'package:superheroes/widgets/action_button.dart';
+import 'package:superheroes/widgets/info_with_button.dart';
 import 'package:superheroes/widgets/superhero_card.dart';
 
 class MainPage extends StatefulWidget {
@@ -73,21 +74,37 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.loading:
             return LoadingIndicator();
           case MainPageState.noFavorites:
-            return NoFavorites();
+            return InfoWithButton(
+              buttonText: 'Search',
+              title: 'No favorites yet',
+              imageHeight: 119,
+              imageTopPadding: 9,
+              imageWidth: 108,
+              assetImage: SuperheroesImages.ironMan,
+              subtitle: 'Search and add',
+            );
           case MainPageState.minSymbols:
             return MinSymbols();
           case MainPageState.nothingFound:
-            return Center(
-                child: Text(
-              state.toString(),
-              style: TextStyle(color: Colors.white),
-            ));
+            return InfoWithButton(
+              buttonText: 'Search',
+              title: 'Nothing found',
+              imageHeight: 112,
+              imageTopPadding: 16,
+              imageWidth: 84,
+              assetImage: SuperheroesImages.hulk,
+              subtitle: 'Search for something else',
+            );
           case MainPageState.loadingError:
-            return Center(
-                child: Text(
-              state.toString(),
-              style: TextStyle(color: Colors.white),
-            ));
+            return InfoWithButton(
+                buttonText: 'Retry',
+                title: 'Error happened',
+                imageHeight: 106,
+                imageTopPadding: 22,
+                imageWidth: 126,
+                assetImage: SuperheroesImages.superman,
+                subtitle: 'Please, try again',
+            );
           case MainPageState.searchResults:
             return SearchResults();
           case MainPageState.favorites:
@@ -119,59 +136,6 @@ class LoadingIndicator extends StatelessWidget {
           color: SuperheroesColors.blue,
           strokeWidth: 4,
         ),
-      ),
-    );
-  }
-}
-
-class NoFavorites extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
-            children: [
-              Container(
-                width: 108,
-                height: 108,
-                decoration: BoxDecoration(
-                  color: SuperheroesColors.blue,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 9),
-                child: Image.asset(
-                  SuperheroesImages.ironMan,
-                  width: 108,
-                  height: 119,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Text(
-            'No favorites yet',
-            style: TextStyle(
-              color: SuperheroesColors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 32,
-            ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Search and add'.toUpperCase(),
-            style: TextStyle(
-              color: SuperheroesColors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-            ),
-          ),
-          SizedBox(height: 30),
-          ActionButton(text: 'Search'.toUpperCase(), onTap: () {}),
-        ],
       ),
     );
   }
