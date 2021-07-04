@@ -37,7 +37,7 @@ class SuperheroCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    name.toUpperCase(),
                     style: TextStyle(
                       color: SuperheroesColors.white,
                       fontWeight: FontWeight.w700,
