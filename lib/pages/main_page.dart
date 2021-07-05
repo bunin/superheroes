@@ -97,13 +97,13 @@ class MainPageStateWidget extends StatelessWidget {
             );
           case MainPageState.loadingError:
             return InfoWithButton(
-                buttonText: 'Retry',
-                title: 'Error happened',
-                imageHeight: 106,
-                imageTopPadding: 22,
-                imageWidth: 126,
-                assetImage: SuperheroesImages.superman,
-                subtitle: 'Please, try again',
+              buttonText: 'Retry',
+              title: 'Error happened',
+              imageHeight: 106,
+              imageTopPadding: 22,
+              imageWidth: 126,
+              assetImage: SuperheroesImages.superman,
+              subtitle: 'Please, try again',
             );
           case MainPageState.searchResults:
             return SearchResults();
@@ -133,7 +133,7 @@ class LoadingIndicator extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 110),
         child: CircularProgressIndicator(
-          color: SuperheroesColors.blue,
+          valueColor: AlwaysStoppedAnimation<Color>(SuperheroesColors.blue),
           strokeWidth: 4,
         ),
       ),
