@@ -19,7 +19,7 @@ class ActionButton extends StatelessWidget {
             color: SuperheroesColors.blue,
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: Text(
-          text,
+          text.toUpperCase(),
           style: TextStyle(
             color: SuperheroesColors.white,
             fontWeight: FontWeight.w700,
