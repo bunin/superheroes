@@ -320,7 +320,7 @@ class SuperheroesList extends StatelessWidget {
                     ),
                   );
                 },
-                info: item,
+                superheroInfo: item,
               ),
             );
           },
