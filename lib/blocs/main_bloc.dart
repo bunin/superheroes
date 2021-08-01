@@ -1,6 +1,10 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
+import 'package:superheroes/exceptions/api_exception.dart';
+import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const minSymbols = 3;
@@ -14,9 +18,9 @@ class MainBloc {
   StreamSubscription? textSubscription;
   StreamSubscription? searchSubscription;
 
-  Stream<MainPageState> observeMainPageState() => stateSubject;
+  http.Client? client;
 
-  MainBloc() {
+  MainBloc({this.client}) {
     stateSubject.add(MainPageState.noFavorites);
     textSubscription =
         Rx.combineLatest2<String, List<SuperheroInfo>, MainPageStateInfo>(
@@ -43,6 +47,8 @@ class MainBloc {
     });
   }
 
+  Stream<MainPageState> observeMainPageState() => stateSubject;
+
   void searchForSuperheroes(final String q) {
     stateSubject.add(MainPageState.loading);
     searchSubscription = search(q).asStream().listen(
@@ -67,9 +73,38 @@ class MainBloc {
       searchedSuperheroesSubject;
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    return SuperheroInfo.mocked
-        .where((i) => i.name.toUpperCase().contains(text.toUpperCase()))
-        .toList();
+    final token = dotenv.env["SUPERHERO_TOKEN"];
+    final response = await (client ??= http.Client()).get(
+      Uri.parse("https://superheroapi.com/api/$token/search/$text"),
+    );
+    final decoded = json.decode(response.body);
+    if (decoded['response'] == 'success') {
+      final List<dynamic> results = decoded['results'];
+      final List<Superhero> superheroes =
+          results.map((e) => Superhero.fromJson(e)).toList();
+      final List<SuperheroInfo> found = superheroes
+          .map((e) => SuperheroInfo(
+                name: e.name,
+                realName: e.biography.fullName,
+                imageUrl: e.image.url,
+              ))
+          .toList();
+      return found;
+    }
+    if (decoded['response'] == 'error') {
+      if (decoded['error'] == 'character with given name not found') {
+        return [];
+      }
+      throw ApiException.fromCode(
+        code: response.statusCode,
+        message: decoded['error'],
+      );
+    }
+
+    throw ApiException.fromCode(
+      code: response.statusCode,
+      message: decoded['error'],
+    );
   }
 
   void nextState() {
@@ -84,15 +119,14 @@ class MainBloc {
   }
 
   void removeFavorite() {
-    var v = List<SuperheroInfo>.from(favoriteSuperheroesSubject.value);
-    if (v.isEmpty) {
-      v.addAll(SuperheroInfo.mocked);
-      favoriteSuperheroesSubject.add(v);
+    final currentFavorites =
+        List<SuperheroInfo>.from(favoriteSuperheroesSubject.value);
+    if (currentFavorites.isEmpty) {
+      favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
       return;
     }
-    v.removeLast();
-    favoriteSuperheroesSubject.add(v);
-    return;
+    currentFavorites.removeLast();
+    favoriteSuperheroesSubject.add(currentFavorites);
   }
 
   void dispose() {
@@ -100,8 +134,12 @@ class MainBloc {
     favoriteSuperheroesSubject.close();
     searchedSuperheroesSubject.close();
     currentTextSubject.close();
-
     textSubscription?.cancel();
+    client?.close();
+  }
+
+  void retry() {
+    searchForSuperheroes(currentTextSubject.valueOrNull ?? '');
   }
 }
 

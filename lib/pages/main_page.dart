@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
@@ -11,14 +12,22 @@ import 'package:superheroes/widgets/info_with_button.dart';
 import 'package:superheroes/widgets/superhero_card.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({Key? key}) : super(key: key);
+  final http.Client? client;
+
+  MainPage({Key? key, this.client}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  final MainBloc bloc = MainBloc();
+  late MainBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = MainBloc(client: widget.client);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +50,8 @@ class _MainPageState extends State<MainPage> {
 }
 
 class MainPageContent extends StatelessWidget {
+  // final FocusNode searchFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -62,77 +73,80 @@ class SearchWidget extends StatefulWidget {
 
 class _SearchWidgetState extends State<SearchWidget> {
   final controller = TextEditingController();
+  bool haveSearchedText = false;
 
   @override
   void initState() {
     super.initState();
     SchedulerBinding.instance?.addPostFrameCallback((_) {
       final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-      controller.addListener(() => bloc.updateText(controller.text));
+      controller.addListener(() {
+        bloc.updateText(controller.text);
+        final haveText = controller.text.isNotEmpty;
+        if (haveText != haveSearchedText) {
+          setState(() {
+            haveSearchedText = haveText;
+          });
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-    return StreamBuilder<String>(
-        stream: bloc.currentTextSubject,
-        builder: (context, snapshot) {
-          return TextField(
-            autofocus: false,
-            controller: controller,
-            cursorColor: Colors.white,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 20,
-              color: SuperheroesColors.white,
-            ),
-            textCapitalization: TextCapitalization.words,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              hintText: "Search",
-              hintStyle: TextStyle(
-                color: Colors.white54,
-                fontSize: 20,
-                fontWeight: FontWeight.w400,
-              ),
-              isDense: true,
-              filled: true,
-              fillColor: SuperheroesColors.indigo75,
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.white54,
-                size: 24,
-              ),
-              suffix: GestureDetector(
-                onTap: () => controller.clear(),
-                child: Icon(
-                  Icons.clear,
-                  color: SuperheroesColors.white,
-                ),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: snapshot.hasData && snapshot.data!.isNotEmpty
-                      ? Colors.white
-                      : Colors.white24,
-                  width: snapshot.hasData && snapshot.data!.isNotEmpty ? 2 : 1,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  width: 2,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          );
-        });
+    return TextField(
+      // focusNode: FocusScope.of(context).,
+      autofocus: false,
+      controller: controller,
+      cursorColor: Colors.white,
+      style: TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 20,
+        color: SuperheroesColors.white,
+      ),
+      textCapitalization: TextCapitalization.words,
+      textInputAction: TextInputAction.search,
+      decoration: InputDecoration(
+        hintText: "Search",
+        hintStyle: TextStyle(
+          color: Colors.white54,
+          fontSize: 20,
+          fontWeight: FontWeight.w400,
+        ),
+        isDense: true,
+        filled: true,
+        fillColor: SuperheroesColors.indigo75,
+        prefixIcon: Icon(
+          Icons.search,
+          color: Colors.white54,
+          size: 24,
+        ),
+        suffix: GestureDetector(
+          onTap: () => controller.clear(),
+          child: Icon(
+            Icons.clear,
+            color: SuperheroesColors.white,
+          ),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: haveSearchedText ? Colors.white : Colors.white24,
+            width: haveSearchedText ? 2 : 1,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            width: 2,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -162,11 +176,16 @@ class MainPageStateWidget extends StatelessWidget {
                   imageWidth: 108,
                   assetImage: SuperheroesImages.ironMan,
                   subtitle: 'Search and add',
+                  onTap: () {
+                    FocusScope.of(context).previousFocus();
+                  },
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: ActionButton(
-                      text: "Remove", onTap: () => bloc.removeFavorite()),
+                    text: "Remove",
+                    onTap: bloc.removeFavorite,
+                  ),
                 ),
               ],
             );
@@ -181,6 +200,9 @@ class MainPageStateWidget extends StatelessWidget {
               imageWidth: 84,
               assetImage: SuperheroesImages.hulk,
               subtitle: 'Search for something else',
+              onTap: () {
+                FocusScope.of(context).previousFocus();
+              },
             );
           case MainPageState.loadingError:
             return InfoWithButton(
@@ -191,6 +213,7 @@ class MainPageStateWidget extends StatelessWidget {
               imageWidth: 126,
               assetImage: SuperheroesImages.superman,
               subtitle: 'Please, try again',
+              onTap: bloc.retry,
             );
           case MainPageState.searchResults:
             return SuperheroesList(
@@ -207,7 +230,9 @@ class MainPageStateWidget extends StatelessWidget {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: ActionButton(
-                      text: "Remove", onTap: () => bloc.removeFavorite()),
+                    text: "Remove",
+                    onTap: bloc.removeFavorite,
+                  ),
                 ),
               ],
             );
