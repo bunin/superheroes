@@ -8,7 +8,7 @@ class ApiException implements Exception {
 
   ApiException(this.message);
 
-  factory ApiException.fromCode({required int code, String message = ''}) {
+  factory ApiException.fromCode({required int code, String? message = ''}) {
     if (code > 499 && code < 600) {
       return ApiException(serverError);
     }
@@ -16,7 +16,7 @@ class ApiException implements Exception {
         (code == 200 && message != 'character with given name not found')) {
       return ApiException(clientError);
     }
-    return ApiException(message);
+    return ApiException(message ?? '');
   }
 
   @override
