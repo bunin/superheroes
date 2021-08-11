@@ -22,11 +22,13 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late MainBloc bloc;
+  late FocusNode focus;
 
   @override
   void initState() {
     super.initState();
     bloc = MainBloc(client: widget.client);
+    focus = FocusNode();
   }
 
   @override
@@ -36,7 +38,10 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         backgroundColor: SuperheroesColors.background,
         body: SafeArea(
-          child: MainPageContent(),
+          child: MainIW(
+            focus: focus,
+            child: MainPageContent(),
+          ),
         ),
       ),
     );
@@ -45,13 +50,21 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     bloc.dispose();
+    focus.dispose();
     super.dispose();
   }
 }
 
-class MainPageContent extends StatelessWidget {
-  // final FocusNode searchFocusNode = FocusNode();
+class MainIW extends InheritedWidget {
+  final FocusNode focus;
 
+  MainIW({required this.focus, required Widget child}) : super(child: child);
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+}
+
+class MainPageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -95,7 +108,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      // focusNode: FocusScope.of(context).,
+      focusNode: context.dependOnInheritedWidgetOfExactType<MainIW>()!.focus,
       autofocus: false,
       controller: controller,
       cursorColor: Colors.white,
@@ -177,7 +190,10 @@ class MainPageStateWidget extends StatelessWidget {
                   assetImage: SuperheroesImages.ironMan,
                   subtitle: 'Search and add',
                   onTap: () {
-                    FocusScope.of(context).previousFocus();
+                    context
+                        .dependOnInheritedWidgetOfExactType<MainIW>()!
+                        .focus
+                        .requestFocus();
                   },
                 ),
                 Align(
@@ -201,7 +217,10 @@ class MainPageStateWidget extends StatelessWidget {
               assetImage: SuperheroesImages.hulk,
               subtitle: 'Search for something else',
               onTap: () {
-                FocusScope.of(context).previousFocus();
+                context
+                    .dependOnInheritedWidgetOfExactType<MainIW>()!
+                    .focus
+                    .requestFocus();
               },
             );
           case MainPageState.loadingError:
