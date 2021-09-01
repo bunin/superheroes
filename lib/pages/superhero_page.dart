@@ -1,14 +1,15 @@
 import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/superhero_bloc.dart';
 import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
 import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
 
@@ -142,12 +143,18 @@ class SuperheroAppBar extends StatelessWidget {
           ),
           errorWidget: (context, url, error) => ColoredBox(
             color: SuperheroesColors.indigo,
-            child: SizedBox.expand(
-              child: Image.asset(
-                SuperheroesImages.unknownBig,
-                width: 85,
-                height: 264,
-                fit: BoxFit.contain,
+            child: SizedBox(
+              width: 85,
+              height: 264,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 32, // ??????
+                ),
+                child: Image.asset(
+                  SuperheroesImages.unknownBig,
+                  width: 85,
+                  height: 264,
+                ),
               ),
             ),
           ),
@@ -406,14 +413,20 @@ class BiographyWidget extends StatelessWidget {
               children: [
                 const SizedBox(height: 16),
                 Center(
-                  child: Text(
-                    "Bio".toUpperCase(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                      color: SuperheroesColors.white,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Bio".toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                          color: SuperheroesColors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(width: 1),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -485,7 +498,9 @@ class BiographyWidget extends StatelessWidget {
             child: RotatedBox(
               quarterTurns: 1,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                width: 70,
+                height: 24,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: ai!.color,
                   borderRadius: BorderRadius.only(
