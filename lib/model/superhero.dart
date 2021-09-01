@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'superhero.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.kebab, explicitToJson: true)
+@JsonSerializable()
 class Superhero {
   final String name;
   final Biography biography;
@@ -13,10 +13,40 @@ class Superhero {
   final Powerstats powerstats;
   final String id;
 
-  Superhero(this.name, this.biography, this.image, this.powerstats, this.id);
+  Superhero({
+    required this.name,
+    required this.biography,
+    required this.image,
+    required this.powerstats,
+    required this.id,
+  });
 
   factory Superhero.fromJson(Map<String, dynamic> json) =>
       _$SuperheroFromJson(json);
 
   Map<String, dynamic> toJson() => _$SuperheroToJson(this);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Superhero &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          biography == other.biography &&
+          image == other.image &&
+          powerstats == other.powerstats &&
+          id == other.id;
+
+  @override
+  int get hashCode =>
+      name.hashCode ^
+      biography.hashCode ^
+      image.hashCode ^
+      powerstats.hashCode ^
+      id.hashCode;
+
+  @override
+  String toString() {
+    return 'Superhero{name: $name, biography: $biography, image: $image, powerstats: $powerstats, id: $id}';
+  }
 }

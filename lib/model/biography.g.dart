@@ -8,12 +8,17 @@ part of 'biography.dart';
 
 Biography _$BiographyFromJson(Map<String, dynamic> json) {
   return Biography(
-    json['full-name'] as String,
-    json['alignment'] as String,
+    fullName: json['full-name'] as String,
+    alignment: json['alignment'] as String,
+    aliases:
+        (json['aliases'] as List<dynamic>).map((e) => e as String).toList(),
+    placeOfBirth: json['place-of-birth'] as String,
   );
 }
 
 Map<String, dynamic> _$BiographyToJson(Biography instance) => <String, dynamic>{
       'full-name': instance.fullName,
       'alignment': instance.alignment,
+      'aliases': instance.aliases,
+      'place-of-birth': instance.placeOfBirth,
     };

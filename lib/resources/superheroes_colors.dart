@@ -8,4 +8,8 @@ class SuperheroesColors {
   static const white = Colors.white;
   static const indigo = Color(0xFF2C3243);
   static const indigo75 = Color(0xBF2C3243);
+  static const red = Color(0xFF961B1B);
+  static const grey = Color(0xFF727272);
+  static const green = Color(0xFF2AAB6A);
+  static const subtitle = Color(0xFF999999);
 }
