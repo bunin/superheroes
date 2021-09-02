@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class ApiException implements Exception {
   static const clientError = 'Client error happened';
   static const serverError = 'Server error happened';
@@ -16,7 +14,7 @@ class ApiException implements Exception {
         (code == 200 && message != 'character with given name not found')) {
       return ApiException(clientError);
     }
-    return ApiException(message ?? '');
+    return ApiException(message ?? 'Unknown error happened');
   }
 
   @override

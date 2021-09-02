@@ -413,20 +413,14 @@ class BiographyWidget extends StatelessWidget {
               children: [
                 const SizedBox(height: 16),
                 Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Bio".toUpperCase(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
-                          color: SuperheroesColors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(width: 1),
-                    ],
+                  child: Text(
+                    "Bio".toUpperCase(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: SuperheroesColors.white,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 8),
