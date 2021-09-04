@@ -40,6 +40,7 @@ class SuperheroBloc {
         if (superhero != null) {
           superheroSubject.add(superhero);
           stateSubject.add(SuperheroPageState.loaded);
+          // stateSubject.add(SuperheroPageState.error);
           state = SuperheroPageState.loaded;
         } else {
           state = SuperheroPageState.loading;

@@ -12,6 +12,7 @@ import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
+import 'package:superheroes/widgets/info_with_button.dart';
 
 class SuperheroPage extends StatefulWidget {
   final http.Client? client;
@@ -50,8 +51,37 @@ class _SuperheroPageState extends State<SuperheroPage> {
                   : AppBar(
                       primary: true,
                       automaticallyImplyLeading: true,
+                      backgroundColor: SuperheroesColors.background,
+                      elevation: 0,
+                      brightness: Brightness.dark,
                     ),
-              body: SuperheroPageContent(),
+              body: snapshot.data == SuperheroPageState.loaded
+                  ? SuperheroPageContent()
+                  : (snapshot.data == SuperheroPageState.loading
+                      ? Container(
+                          padding: EdgeInsets.only(top: 60),
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 4,
+                              color: SuperheroesColors.blue,
+                            ),
+                          ),
+                        )
+                      : (snapshot.data == SuperheroPageState.error
+                          ? InfoWithButton(
+                              buttonText: 'Retry',
+                              title: 'Error happened',
+                              imageHeight: 106,
+                              imageTopPadding: 22,
+                              imageWidth: 126,
+                              assetImage: SuperheroesImages.superman,
+                              subtitle: 'Please, try again',
+                              onTap: bloc.retry,
+                            )
+                          : SizedBox.shrink())),
             );
           }),
     );
@@ -420,7 +450,6 @@ class BiographyWidget extends StatelessWidget {
                       fontSize: 18,
                       color: SuperheroesColors.white,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 8),
