@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.skillbranch.superheroes">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="superheroes"
         android:icon="@mipmap/ic_launcher">
