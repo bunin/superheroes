@@ -60,8 +60,8 @@ class SuperheroBloc {
     requestSubscription?.cancel();
     requestSubscription = request().asStream().listen(
       (superhero) {
+        superheroSubject.add(superhero);
         if (currentState != SuperheroPageState.loaded) {
-          superheroSubject.add(superhero);
           stateSubject.add(SuperheroPageState.loaded);
         }
       },
