@@ -23,4 +23,26 @@ class Biography {
   Map<String, dynamic> toJson() => _$BiographyToJson(this);
 
   AlignmentInfo? get alignmentInfo => AlignmentInfo.fromAlignment(alignment);
+
+  @override
+  String toString() {
+    return 'Biography{fullName: $fullName, alignment: $alignment, aliases: $aliases, placeOfBirth: $placeOfBirth}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Biography &&
+          runtimeType == other.runtimeType &&
+          fullName == other.fullName &&
+          alignment == other.alignment &&
+          aliases == other.aliases &&
+          placeOfBirth == other.placeOfBirth;
+
+  @override
+  int get hashCode =>
+      fullName.hashCode ^
+      alignment.hashCode ^
+      aliases.hashCode ^
+      placeOfBirth.hashCode;
 }

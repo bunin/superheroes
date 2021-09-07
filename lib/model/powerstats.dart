@@ -50,4 +50,30 @@ class Powerstats {
     final v = int.tryParse(value);
     return v == null ? 0 : v / 100;
   }
+
+  @override
+  String toString() {
+    return 'Powerstats{intelligence: $intelligence, strength: $strength, speed: $speed, durability: $durability, power: $power, combat: $combat}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Powerstats &&
+          runtimeType == other.runtimeType &&
+          intelligence == other.intelligence &&
+          strength == other.strength &&
+          speed == other.speed &&
+          durability == other.durability &&
+          power == other.power &&
+          combat == other.combat;
+
+  @override
+  int get hashCode =>
+      intelligence.hashCode ^
+      strength.hashCode ^
+      speed.hashCode ^
+      durability.hashCode ^
+      power.hashCode ^
+      combat.hashCode;
 }

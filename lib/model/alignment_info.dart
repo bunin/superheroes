@@ -23,4 +23,20 @@ class AlignmentInfo {
         return null;
     }
   }
+
+  @override
+  String toString() {
+    return 'AlignmentInfo{name: $name, color: $color}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AlignmentInfo &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          color == other.color;
+
+  @override
+  int get hashCode => name.hashCode ^ color.hashCode;
 }

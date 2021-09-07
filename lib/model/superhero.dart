@@ -27,6 +27,11 @@ class Superhero {
   Map<String, dynamic> toJson() => _$SuperheroToJson(this);
 
   @override
+  String toString() {
+    return 'Superhero{name: $name, biography: $biography, image: $image, powerstats: $powerstats, id: $id}';
+  }
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Superhero &&
@@ -44,9 +49,4 @@ class Superhero {
       image.hashCode ^
       powerstats.hashCode ^
       id.hashCode;
-
-  @override
-  String toString() {
-    return 'Superhero{name: $name, biography: $biography, image: $image, powerstats: $powerstats, id: $id}';
-  }
 }
