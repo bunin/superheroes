@@ -27,7 +27,8 @@ class SuperheroBloc {
 
   Stream<bool> observeIsFavorite() => storage.observeIsFavorite(id);
 
-  Stream<Superhero> observeSuperhero() => superheroSubject.distinct();
+  Stream<Superhero> observeSuperhero() =>
+      superheroSubject.distinct((previous, next) => previous.id == next.id);
 
   Stream<SuperheroPageState> observeSuperheroPageState() =>
       stateSubject.distinct();
