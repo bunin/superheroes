@@ -27,8 +27,7 @@ class SuperheroBloc {
 
   Stream<bool> observeIsFavorite() => storage.observeIsFavorite(id);
 
-  Stream<Superhero> observeSuperhero() =>
-      superheroSubject.distinct((i, j) => i.toString() == j.toString());
+  Stream<Superhero> observeSuperhero() => superheroSubject.distinct();
 
   Stream<SuperheroPageState> observeSuperheroPageState() =>
       stateSubject.distinct();
@@ -41,7 +40,6 @@ class SuperheroBloc {
         if (superhero != null) {
           superheroSubject.add(superhero);
           stateSubject.add(SuperheroPageState.loaded);
-          // stateSubject.add(SuperheroPageState.error);
           state = SuperheroPageState.loaded;
         } else {
           state = SuperheroPageState.loading;
@@ -71,7 +69,6 @@ class SuperheroBloc {
             "error happened in requestSuperhero in state $currentState: $error, $stackTrace");
         if (currentState == SuperheroPageState.loading) {
           stateSubject.add(SuperheroPageState.error);
-          print("SEt StaTE 98: ${stateSubject.value}");
         }
       },
     );

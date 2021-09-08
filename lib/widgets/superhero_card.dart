@@ -34,6 +34,7 @@ class SuperheroCard extends StatelessWidget {
             if (superheroInfo.alignmentInfo != null)
               AlignmentWidget(
                 alignmentInfo: superheroInfo.alignmentInfo!,
+                borderRadius: BorderRadius.zero,
               ),
           ],
         ),

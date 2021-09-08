@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/superhero_bloc.dart';
-import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
 import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
+import 'package:superheroes/widgets/alignment_widget.dart';
 import 'package:superheroes/widgets/info_with_button.dart';
 
 class SuperheroPage extends StatefulWidget {
@@ -122,6 +122,7 @@ class SuperheroPageContent extends StatelessWidget {
                             PowerstatsWidget(
                                 powerstats: snapshot.data!.powerstats),
                           BiographyWidget(biography: snapshot.data!.biography),
+                          const SizedBox(height: 30),
                         ],
                       ),
                     ),
@@ -169,23 +170,14 @@ class SuperheroAppBar extends StatelessWidget {
           fit: BoxFit.cover,
           placeholder: (context, url) => ColoredBox(
             color: SuperheroesColors.indigo,
-            child: SizedBox.expand(),
           ),
-          errorWidget: (context, url, error) => ColoredBox(
+          errorWidget: (context, url, error) => Container(
             color: SuperheroesColors.indigo,
-            child: SizedBox(
+            alignment: Alignment.center,
+            child: Image.asset(
+              SuperheroesImages.unknownBig,
               width: 85,
               height: 264,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 32, // ??????
-                ),
-                child: Image.asset(
-                  SuperheroesImages.unknownBig,
-                  width: 85,
-                  height: 264,
-                ),
-              ),
             ),
           ),
         ),
@@ -425,7 +417,7 @@ class BiographyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ai = AlignmentInfo.fromAlignment(biography.alignment);
+    // final ai = AlignmentInfo.fromAlignment(biography.alignment);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -433,13 +425,12 @@ class BiographyWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         color: SuperheroesColors.indigo,
       ),
-      width: Size.infinite.width,
       child: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 16),
                 Center(
@@ -453,97 +444,100 @@ class BiographyWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  "Full name".toUpperCase(),
-                  style: TextStyle(
-                    color: SuperheroesColors.subtitle,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  biography.fullName,
-                  style: TextStyle(
-                    color: SuperheroesColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.start,
+                BiographyField(name: "Full name", value: biography.fullName),
+                const SizedBox(height: 20),
+                BiographyField(
+                  name: "Aliases",
+                  value: biography.aliases.join(", "),
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  "Aliases".toUpperCase(),
-                  style: TextStyle(
-                    color: SuperheroesColors.subtitle,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  biography.aliases.join(", "),
-                  style: TextStyle(
-                    color: SuperheroesColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  "Place of birth".toUpperCase(),
-                  style: TextStyle(
-                    color: SuperheroesColors.subtitle,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  biography.placeOfBirth,
-                  style: TextStyle(
-                    color: SuperheroesColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.start,
+                BiographyField(
+                  name: "Place of birth",
+                  value: biography.placeOfBirth,
                 ),
                 const SizedBox(height: 24),
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.topRight,
-            child: RotatedBox(
-              quarterTurns: 1,
-              child: Container(
-                width: 70,
-                height: 24,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: ai!.color,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                ),
-                child: Text(
-                  biography.alignment.toUpperCase(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10,
-                    color: SuperheroesColors.white,
-                  ),
+          if (biography.alignmentInfo != null)
+            Align(
+              alignment: Alignment.topRight,
+              child: AlignmentWidget(
+                alignmentInfo: biography.alignmentInfo!,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
                 ),
               ),
             ),
-          ),
+          // Align(
+          //   alignment: Alignment.topRight,
+          //   child: RotatedBox(
+          //     quarterTurns: 1,
+          //     child: Container(
+          //       width: 70,
+          //       height: 24,
+          //       alignment: Alignment.center,
+          //       decoration: BoxDecoration(
+          //         color: ai!.color,
+          //         borderRadius: BorderRadius.only(
+          //           topLeft: Radius.circular(16),
+          //           bottomRight: Radius.circular(16),
+          //         ),
+          //       ),
+          //       child: Text(
+          //         biography.alignment.toUpperCase(),
+          //         style: TextStyle(
+          //           fontWeight: FontWeight.w700,
+          //           fontSize: 10,
+          //           color: SuperheroesColors.white,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
+    );
+  }
+}
+
+class BiographyField extends StatelessWidget {
+  final String name;
+  final String value;
+
+  const BiographyField({
+    Key? key,
+    required this.name,
+    required this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          name.toUpperCase(),
+          style: TextStyle(
+            color: SuperheroesColors.subtitle,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+          textAlign: TextAlign.start,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            color: SuperheroesColors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+          textAlign: TextAlign.start,
+        ),
+      ],
     );
   }
 }

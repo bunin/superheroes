@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:superheroes/model/alignment_info.dart';
+import 'package:collection/collection.dart';
 
 part 'biography.g.dart';
 
@@ -36,7 +37,7 @@ class Biography {
           runtimeType == other.runtimeType &&
           fullName == other.fullName &&
           alignment == other.alignment &&
-          aliases == other.aliases &&
+          ListEquality<String>().equals(aliases, other.aliases) &&
           placeOfBirth == other.placeOfBirth;
 
   @override
